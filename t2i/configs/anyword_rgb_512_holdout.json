@@ -1,0 +1,51 @@
+{
+  "format_version": 1,
+  "dataset_root": "../dataset/pixeldit_wids_text",
+  "source_sample_count": 215552,
+  "exclude_indices": [
+    24776,
+    38359,
+    87651,
+    150731,
+    202162
+  ],
+  "held_out_samples": [
+    {
+      "source_index": 24776,
+      "key": "train_3-000024776",
+      "shard": "shards/train_3-00002.tar",
+      "prompt": "the unforgetable nat king cole, with the visible words \"KING\", \"COLE\", and \"NAT\" clearly rendered in the image."
+    },
+    {
+      "source_index": 38359,
+      "key": "train_3-000038359",
+      "shard": "shards/train_3-00003.tar",
+      "prompt": "bbb accredited business, with the visible words \"ACCREDITED\", \"BUSINESS\", \"BBB\", and \"A+\" clearly rendered in the image."
+    },
+    {
+      "source_index": 87651,
+      "key": "train_3-000087651",
+      "shard": "shards/train_3-00008.tar",
+      "prompt": "assassin's creed rebellion, with the visible words \"REBELLION\" and \"CREED\" clearly rendered in the image."
+    },
+    {
+      "source_index": 150731,
+      "key": "train_4-000042955",
+      "shard": "shards/train_4-00004.tar",
+      "prompt": "peppermint valentine hearts, with the visible words \"Hearts\", \"VALENTINE\", and \"Peppermint\" clearly rendered in the image."
+    },
+    {
+      "source_index": 202162,
+      "key": "train_4-000094386",
+      "shard": "shards/train_4-00009.tar",
+      "prompt": "fit fudge logo, with the visible words \"HEALTHY\" and \"FUDGE\" clearly rendered in the image."
+    }
+  ],
+  "authored_validation_prompts": [
+    "a brushed metal cafe sign on a brick wall, with the exact visible word \"EMBER\" clearly rendered in warm amber letters",
+    "a minimal violet cosmetics poster, with the exact visible words \"LUNA\" and \"GLOW\" clearly rendered in white lettering",
+    "a retro arcade cabinet display, with the exact visible word \"HIGHSCORE\" clearly rendered in neon green pixels",
+    "a red emergency exit sign, with the exact visible words \"KEEP CLEAR\" clearly rendered in white block letters",
+    "a blue hardcover book cover, with the exact visible title \"THE LAST ORBIT\" clearly rendered in silver serif letters"
+  ]
+}
