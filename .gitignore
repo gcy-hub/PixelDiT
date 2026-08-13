@@ -1,0 +1,12 @@
+__pycache__/
+c2i/train_logs/
+
+# Local model, dataset, cache, and training outputs.
+ckpts/*
+!ckpts/download.sh
+dataset/parquet/
+dataset/pixeldit_wids_text/
+dataset/.hf/
+t2i/output/
+*.py[cod]
+.DS_Store

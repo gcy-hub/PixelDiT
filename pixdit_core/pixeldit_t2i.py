@@ -44,6 +44,8 @@ class MMDiTJointAttention(nn.Module):
         self.attn_drop = nn.Dropout(attn_drop)
         self.proj_drop_x = nn.Dropout(proj_drop)
         self.proj_drop_y = nn.Dropout(proj_drop)
+        self._attention_recorder = None
+        self._attention_layer_index = None
 
     def forward(
             self,
@@ -82,6 +84,19 @@ class MMDiTJointAttention(nn.Module):
         q_joint = torch.cat([qy, qx], dim=2)
         k_joint = torch.cat([ky, kx], dim=2)
         v_joint = torch.cat([vy, vx], dim=2)
+
+        # SDPA does not expose attention probabilities. The optional recorder
+        # recomputes only analysis maps and is disabled in normal training and
+        # inference, leaving the Flash/SDPA path unchanged.
+        if self._attention_recorder is not None:
+            self._attention_recorder.record(
+                layer_index=self._attention_layer_index,
+                image_queries=qx,
+                joint_keys=k_joint,
+                text_token_count=Ny,
+                attn_mask=attn_mask,
+                head_dim=self.head_dim,
+            )
 
         out_joint = F.scaled_dot_product_attention(q_joint, k_joint, v_joint, dropout_p=0.0, attn_mask=attn_mask)
         out_y = out_joint[:, :, :Ny, :]
@@ -218,8 +233,16 @@ class PixDiT_T2I(nn.Module):
         self.precompute_pos = dict()
         self.precompute_pos_txt = dict()
         self.last_repa_tokens = None
+        self._attention_recorder = None
 
         self.initialize_weights()
+
+    def set_attention_recorder(self, recorder):
+        """Attach an optional analysis recorder to all text-image attention blocks."""
+        self._attention_recorder = recorder
+        for layer_index, block in enumerate(self.patch_blocks):
+            block.attn._attention_recorder = recorder
+            block.attn._attention_layer_index = layer_index
 
     def fetch_pos(self, height, width, device):
         if (height, width) in self.precompute_pos:
@@ -270,6 +293,8 @@ class PixDiT_T2I(nn.Module):
         condition = torch.nn.functional.silu(t_emb)
 
         if s is None:
+            if self._attention_recorder is not None:
+                self._attention_recorder.begin_model_call(t)
             s0 = self.s_embedder(x_patches)
             pos_txt = self.fetch_pos_text(Ltxt, x.device) if self.use_text_rope else None
             attn_mask_joint = None

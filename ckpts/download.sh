@@ -8,7 +8,7 @@ HF_GEMMA_REPO="google/gemma-2-2b-it"
 HF_PIXELDIT_REPO="nvidia/PixelDiT-1300M-1024px"
 PIXELDIT_FILE="pixeldit_t2i_v1.pth"
 CHECKPOINT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HF_ENDPOINT="https://huggingface.co"
+HF_ENDPOINT="https://hf-mirror.com"
 # -----------------------------------------------------------------------
 
 set -euo pipefail

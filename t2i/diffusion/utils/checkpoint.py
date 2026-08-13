@@ -50,7 +50,9 @@ def prune_recovery_checkpoints(work_dir, keep_last):
 def _load_model(path):
     """Load a model checkpoint from a local file path."""
     assert os.path.isfile(path), f"Could not find checkpoint at {path}"
-    return torch.load(path, map_location=lambda storage, loc: storage)
+    # Checkpoints are trusted local model files. PyTorch 2.6+ defaults to
+    # weights_only=True, which cannot deserialize the RNG metadata saved here.
+    return torch.load(path, map_location=lambda storage, loc: storage, weights_only=False)
 
 
 def save_checkpoint(

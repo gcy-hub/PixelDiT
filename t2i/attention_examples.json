@@ -1,0 +1,17 @@
+[
+  {
+    "name": "dog",
+    "prompt": "a dog and an apple",
+    "phrase": "dog"
+  },
+  {
+    "name": "hello_world",
+    "prompt": "a poster with \"Hello World\"",
+    "phrase": "Hello World"
+  },
+  {
+    "name": "good_on_white",
+    "prompt": "a text \"Good\" on the pure white background",
+    "phrase": "Good"
+  }
+]
