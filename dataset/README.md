@@ -1,8 +1,12 @@
-# AnyWord-3M dataset preparation
+# Dataset preparation (AnyWord-3M / ImageNet-1K)
 
-The training job consumes local PixelDiT WIDS shards, not parquet files
-directly. `download_and_prepare.sh` downloads the two source parquet files and
-then runs the repository converter.
+`download_and_prepare.sh` handles both training datasets in this repository:
+
+- `anyword` (default): downloads the two AnyWord-3M source parquet files and
+  converts them to PixelDiT WIDS shards, which the T2I training job consumes
+  directly.
+- `imagenet1k`: downloads the ImageNet-1K (ILSVRC 2012) dataset as parquet
+  files from the official Hugging Face mirror.
 
 ## Prerequisites
 
@@ -18,7 +22,14 @@ then runs the repository converter.
 From the project root:
 
 ```bash
+# AnyWord-3M -> PixelDiT WIDS (default)
 bash dataset/download_and_prepare.sh
+
+# ImageNet-1K parquet download
+bash dataset/download_and_prepare.sh imagenet1k
+
+# Both
+bash dataset/download_and_prepare.sh all
 ```
 
 The script has an editable parameter block at the top:
@@ -36,6 +47,47 @@ If the hosting mirror stores the files at the repository root, set
 dataset/parquet/train_3.parquet
 dataset/parquet/train_4.parquet
 ```
+
+## ImageNet-1K download
+
+```bash
+bash dataset/download_and_prepare.sh imagenet1k
+```
+
+The ImageNet-1K files come from the official ILSVRC Hugging Face mirror
+[ILSVRC/imagenet-1k](https://huggingface.co/datasets/ILSVRC/imagenet-1k).
+Notes:
+
+1. The repository is gated: accept the access terms on the dataset page
+   ([hf-mirror](https://hf-mirror.com/datasets/ILSVRC/imagenet-1k) /
+   [huggingface.co](https://huggingface.co/datasets/ILSVRC/imagenet-1k)) and
+   run `hf auth login` before downloading.
+2. Reserve ~167 GB of disk space: the training split is ~146.5 GB (294 parquet
+   files) and the validation split ~6.7 GB. The ~13.6 GB test split is skipped
+   unless you set `IMAGENET_INCLUDE_TEST=1` in the parameter block.
+   Skipping it needs `--exclude`, which requires `huggingface_hub >= 0.23`; on
+   older CLI versions remove the flag or upgrade.
+3. Downloads default to the China mirror
+   `HF_ENDPOINT="https://hf-mirror.com"`; switch it back to
+   `https://huggingface.co` in the parameter block if you are outside China.
+4. The downloaded files land at `dataset/imagenet1k/data/`:
+
+```text
+dataset/imagenet1k/
+├── classes.py
+└── data/
+    ├── train-00000-of-00294.parquet
+    ├── ...
+    ├── validation-00000-of-00014.parquet
+    └── ...
+```
+
+Each parquet row stores the image bytes, label, and file name, so the splits
+can be reconstructed into the per-class folder layout that the
+[c2i ImageNet pipeline](../c2i/README.md) expects (REPA-E preprocessing).
+If you prefer the original tarballs, download `ILSVRC2012_img_train.tar`,
+`ILSVRC2012_img_val.tar`, and `ILSVRC2012_devkit_t12.tar.gz` from
+[image-net.org](https://image-net.org/) after logging in.
 
 ## Conversion output
 

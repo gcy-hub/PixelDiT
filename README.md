@@ -12,12 +12,12 @@ Run:
 bash ckpts/download.sh
 ```
 
-## 2. Download and prepare AnyWord-3M
+## 2. Download and prepare AnyWord-3M and ImageNet-1K
 
 Run:
 
 ```bash
-bash dataset/download_and_prepare.sh
+bash dataset/download_and_prepare.sh all
 ```
 
 ## 3. Configure and start training
